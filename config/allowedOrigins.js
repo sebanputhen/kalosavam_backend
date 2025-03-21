@@ -10,6 +10,7 @@ const allowedOrigins = [
   "https://jeevan-backend-n9hy.onrender.com",
   "https://jeevan-bay.vercel.app",
   "https://jeevan-frontend-two.vercel.app",
+  "https://kalosavam.vercel.app",
 ];
 
 module.exports = allowedOrigins;

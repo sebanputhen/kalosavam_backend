@@ -22,7 +22,10 @@ router.delete('/forane/:foraneId',
   isAdmin,
   (req, res) => stageAllocationController.deleteAllocations(req, res)
 );
-
+router.get('/forane/:foraneId/venue/:venueId',
+  verifyToken,
+  (req, res) => stageAllocationController.getEventsByForaneAndVenue(req, res)
+);
 // Get allocation statistics for a forane
 router.get('/statistics/:foraneId', 
   verifyToken,

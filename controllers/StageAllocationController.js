@@ -110,7 +110,68 @@ class StageAllocationController {
       });
     }
   }
+// Add this method to the StageAllocationController class
+async getEventsByForaneAndVenue(req, res) {
+  try {
+    const { foraneId, venueId } = req.params;
 
+    // Validate foraneId and venueId
+    if (!mongoose.Types.ObjectId.isValid(foraneId) || !mongoose.Types.ObjectId.isValid(venueId)) {
+      return res.status(400).json({
+        message: 'Invalid Forane or Venue ID',
+        success: false
+      });
+    }
+
+    // Find the stage allocation for the specific forane
+    const stageAllocation = await StageAllocation.findOne({ forane: foraneId })
+      .populate({
+        path: 'venues.venueId',
+        match: { _id: venueId }
+      })
+      .populate({
+        path: 'venues.eventIds',
+        select: 'eventName section gender eventType category'
+      });
+
+    // If no allocation found
+    if (!stageAllocation) {
+      return res.status(404).json({
+        message: 'No allocations found for this forane and venue',
+        data: [],
+        success: true
+      });
+    }
+
+    // Find the specific venue in the allocation
+    const venueAllocation = stageAllocation.venues.find(v => 
+      v.venueId && v.venueId._id.toString() === venueId
+    );
+
+    // If venue not found in allocation
+    if (!venueAllocation) {
+      return res.status(404).json({
+        message: 'Venue not found in allocations',
+        data: [],
+        success: true
+      });
+    }
+
+    // Return the events for this venue
+    res.status(200).json({
+      message: 'Events retrieved successfully',
+      data: venueAllocation.eventIds,
+      success: true
+    });
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    res.status(500).json({
+      message: 'Internal server error',
+      error: error.message,
+      success: false
+    });
+  }
+}
   // Delete allocations for a forane
   async deleteAllocations(req, res) {
     try {
