@@ -17,4 +17,4 @@ router.post('/parish-credentials', create);
 router.put('/parish-credentials/:id', resetPassword);
 router.delete('/parish-credentials/:id', remove);
 
-module.exports = router;
+module.exports = router; 
