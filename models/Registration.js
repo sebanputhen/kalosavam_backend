@@ -40,6 +40,10 @@ const registrationSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+     registrationNumber: {
+      type: String,
+      default: null
+    },
     groupRegistrationNumber: {
       type: String,
       default: null

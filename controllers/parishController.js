@@ -8,9 +8,10 @@ const Koottayma = require("../models/Koottayma");
 const Forane = require("../models/Forane");   
 async function getAllParishes(req, res) {
   try {
-    const parishes = await Parish.find({ forane: req.params.foraneid }).select(
-      "_id name phone building street pincode state district forane shortCode"
-    );
+   const parishes = await Parish.find({ forane: req.params.foraneid })
+  .select("_id name phone building street pincode state district forane shortCode")
+  .sort({ name: 1 });
+    
     if (!parishes) {
       res.status(404).json({ message: "No parish found." });
     } else {
@@ -40,7 +41,8 @@ async function searchParishes(req, res) {
 }
 async function getWAllParishes(req, res) {
   try {
-    const foranes = await Parish.find().select("_id name phone building street pincode state district forane shortCode");
+    const foranes = await Parish.find().select("_id name phone building street pincode state district forane shortCode")
+    .sort({ name: 1 });
     if (!foranes) {
       res.status(404).json({ message: "No parishes found." });
     } else {
@@ -114,7 +116,7 @@ const getMultipleParishes = async (req, res) => {
     const missingIds = validIds.filter(
       id => !foundIds.includes(id)
     );
-console.log(processedParishes);
+
     return res.status(200).json({
       foundParishes: processedParishes,
       missingParishIds: missingIds,

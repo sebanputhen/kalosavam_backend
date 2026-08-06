@@ -72,9 +72,10 @@ const registrationRoutes = require('./routes/registrationRoutes');
 const venues = require('./routes/venues');
 const allocation = require('./routes/stageAllocation');
 const eventStatsRoutes = require('./routes/eventStatsRoutes');
+const parishCredentialRoutes = require('./routes/parishCredential.routes');
 
 const eventScoringRoutes = require('./routes/eventScoringRoutes');
-
+const studentRoutes = require('./routes/studentRoutes');
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback_secret_key',
   resave: false,
@@ -124,6 +125,8 @@ app.use('/api', eventStatsRoutes);
 app.use('/venues', venues);
 app.use('/allocations', allocation);
 app.use('/event-scoring', eventScoringRoutes);
+app.use('/students', studentRoutes);
+app.use('/parishc', parishCredentialRoutes);
 const specs = swaggerJsdoc(options);
 app.use(
   "/api-docs",

@@ -637,6 +637,111 @@ exports.createRegistration = async (req, res) => {
 };
 
 // Update registration
+// exports.updateRegistration = async (req, res) => {
+//   try {
+//     // Get current registration
+//     const currentRegistration = await Registration.findById(req.params.id);
+//     if (!currentRegistration) {
+//       return res.status(404).json({
+//         status: 'fail',
+//         message: 'No registration found with that ID'
+//       });
+//     }
+    
+//     const { standard, gender } = req.body;
+    
+//     // If standard is being updated, validate section
+//     if (standard) {
+//       const participantSection = getParticipantSection(standard);
+//       if (!participantSection) {
+//         return res.status(400).json({
+//           status: 'fail',
+//           message: `Invalid class selection. Available classes: ${Object.values(SECTION_CONFIG).map(c => c.classes.join(', ')).join(' or ')}`
+//         });
+//       }
+      
+//       // Get event details to validate section match
+//       const eventDetails = await Event.findById(currentRegistration.event);
+//       if (eventDetails.section && eventDetails.section !== participantSection) {
+//         return res.status(400).json({
+//           status: 'fail',
+//           message: `Students in class ${standard} (${participantSection} section) cannot register for events in the ${eventDetails.section} section`
+//         });
+//       }
+//     }
+    
+//     // If gender is being updated, validate against event gender requirement
+//     if (gender) {
+//       const eventDetails = await Event.findById(currentRegistration.event);
+      
+//       if (eventDetails.gender !== 'common' &&
+//           (gender === 'M' && eventDetails.gender !== 'male' ||
+//            gender === 'F' && eventDetails.gender !== 'female')) {
+//         return res.status(400).json({
+//           status: 'fail',
+//           message: `This event is for ${eventDetails.gender} participants only`
+//         });
+//       }
+//     }
+    
+//     // Set updated timestamp
+//     req.body.updatedAt = Date.now();
+    
+//     const updatedRegistration = await Registration.findByIdAndUpdate(
+//       req.params.id,
+//       req.body,
+//       {
+//         new: true,
+//         runValidators: true
+//       }
+//     )
+//       .populate('event', 'eventName eventType gender section')
+//       .populate('parish', 'name');
+    
+//     if (!updatedRegistration) {
+//       return res.status(404).json({
+//         status: 'fail',
+//         message: 'No registration found with that ID'
+//       });
+//     }
+    
+//     res.status(200).json({
+//       status: 'success',
+//       data: {
+//         registration: updatedRegistration
+//       }
+//     });
+//   } catch (err) {
+//     res.status(400).json({
+//       status: 'fail',
+//       message: err.message
+//     });
+//   }
+// };
+
+// Delete registration
+exports.deleteRegistration = async (req, res) => {
+  try {
+    const registration = await Registration.findByIdAndDelete(req.params.id);
+    
+    if (!registration) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'No registration found with that ID'
+      });
+    }
+    
+    res.status(204).json({
+      status: 'success',
+      data: null
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err.message
+    });
+  }
+};
 exports.updateRegistration = async (req, res) => {
   try {
     // Get current registration
@@ -645,6 +750,27 @@ exports.updateRegistration = async (req, res) => {
       return res.status(404).json({
         status: 'fail',
         message: 'No registration found with that ID'
+      });
+    }
+
+    // If only updating registration numbers, skip validation
+    const isRegNumberOnlyUpdate = Object.keys(req.body).every(key => 
+      ['registrationNumber', 'groupRegistrationNumber', 'updatedAt'].includes(key)
+    );
+
+    if (isRegNumberOnlyUpdate) {
+      req.body.updatedAt = Date.now();
+      const updatedRegistration = await Registration.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true, runValidators: false }
+      )
+        .populate('event', 'eventName eventType gender section')
+        .populate('parish', 'name');
+
+      return res.status(200).json({
+        status: 'success',
+        data: { registration: updatedRegistration }
       });
     }
     
@@ -718,31 +844,6 @@ exports.updateRegistration = async (req, res) => {
     });
   }
 };
-
-// Delete registration
-exports.deleteRegistration = async (req, res) => {
-  try {
-    const registration = await Registration.findByIdAndDelete(req.params.id);
-    
-    if (!registration) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'No registration found with that ID'
-      });
-    }
-    
-    res.status(204).json({
-      status: 'success',
-      data: null
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err.message
-    });
-  }
-};
-
 // Get registrations count by parish for an event
 exports.getRegistrationsCountByParish = async (req, res) => {
   try {

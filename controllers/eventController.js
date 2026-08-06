@@ -87,16 +87,16 @@ exports.createEvent = async (req, res) => {
     }
 
     // Check for duplicate event name
-    const duplicateNameEvent = await Event.findOne({
-      eventName: { $regex: new RegExp(`^${req.body.eventName}$`, 'i') } // Case insensitive match
-    });
+    // const duplicateNameEvent = await Event.findOne({
+    //   eventName: { $regex: new RegExp(`^${req.body.eventName}$`, 'i') } // Case insensitive match
+    // });
 
-    if (duplicateNameEvent) {
-      return res.status(400).json({
-        status: 'fail',
-        message: `An event with the name "${req.body.eventName}" already exists. Please use a different name`
-      });
-    }
+    // if (duplicateNameEvent) {
+    //   return res.status(400).json({
+    //     status: 'fail',
+    //     message: `An event with the name "${req.body.eventName}" already exists. Please use a different name`
+    //   });
+    // }
 
     const newEvent = await Event.create(req.body);
 
