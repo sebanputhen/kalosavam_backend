@@ -127,10 +127,35 @@ exports.getAllEventScorings = async (req, res) => {
     return errorHandler(error, res);
   }
 };
+// exports.getDashboardData = async (req, res) => {
+//   try {
+//     const { foraneId } = req.params;
+
+//     if (!foraneId) {
+//       return res.status(400).json({ success: false, message: 'Forane ID is required' });
+//     }
+
+//     const Parish = require('../models/Parish');
+
+//     const [eventScorings, events, parishes] = await Promise.all([
+//       EventScoring.find({ foraneId })
+//         .populate('eventId', 'eventName section stage gender eventType'),
+//       Event.find().populate('category', 'name stage'),
+//       Parish.find({ $or: [{ forane: foraneId }, { 'forane._id': foraneId }] })
+//         .select('name phone forane')
+//     ]);
+
+//     return res.status(200).json({
+//       success: true,
+//       data: { eventScorings, events, parishes }
+//     });
+//   } catch (error) {
+//     return errorHandler(error, res);
+//   }
+// };
 exports.getDashboardData = async (req, res) => {
   try {
     const { foraneId } = req.params;
-
     if (!foraneId) {
       return res.status(400).json({ success: false, message: 'Forane ID is required' });
     }
@@ -139,7 +164,7 @@ exports.getDashboardData = async (req, res) => {
 
     const [eventScorings, events, parishes] = await Promise.all([
       EventScoring.find({ foraneId })
-        .populate('eventId', 'eventName section stage gender eventType'),
+        .populate('eventId', 'eventName section stage gender eventType category'),
       Event.find().populate('category', 'name stage'),
       Parish.find({ $or: [{ forane: foraneId }, { 'forane._id': foraneId }] })
         .select('name phone forane')
