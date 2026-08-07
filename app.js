@@ -90,6 +90,8 @@ app.get("/", (req, res) => {
   res.status(200);
 });
 //app.use("/auth", auth);
+// After your other routes
+app.get('/ping', (req, res) => res.json({ ok: true }));
 app.use("/forane", forane);
 app.use("/parish", parish);
 app.use("/koottayma", koottayma);
