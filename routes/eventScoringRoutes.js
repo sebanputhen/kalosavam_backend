@@ -5,6 +5,7 @@ const {
   saveEventScoring,
   getEventScoring,
   getAllEventScorings,
+  getDashboardData,
   getForaneEventScorings,
   getParishPointsSummary,
   deleteEventScoring
@@ -53,7 +54,7 @@ router.get('/parish/:parishId',  (req, res) => {
 
 // Route to get parish-wise points summary for a forane
 router.get('/points/forane/:foraneId',  getParishPointsSummary);
-
+router.get('/event-scoring/forane/:foraneId/dashboard', getDashboardData);
 // Route to delete a scoring
 router.delete('/:id',  deleteEventScoring);
 
